@@ -1,0 +1,23 @@
+services:
+  ollama-watch:
+    build: .
+    image: ollama-watch:latest
+    container_name: ollama-watch
+    restart: unless-stopped
+    volumes:
+      - ./data:/data
+    environment:
+      NTFY_URL: "http://ntfy:80"
+      NTFY_TOPIC: "Ollama"
+      STATE_FILE: "/data/state.json"
+      HTTP_TIMEOUT: "30"
+    networks:
+      - notify-net
+    command: ["--loop", "--interval", "21600"]
+
+# Shared with your notification service. Remove this block if that service
+# runs on the default compose network instead.
+networks:
+  notify-net:
+    external: true
+    name: notify_default
